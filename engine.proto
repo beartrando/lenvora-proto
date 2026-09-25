@@ -5,7 +5,6 @@ package engine;
 import "common/empty.proto";
 import "common/error.proto";
 import "common/ping.proto";
-import "battle.proto";
 
 service Engine {
 }
