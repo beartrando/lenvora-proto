@@ -54,3 +54,4 @@ message UserResponse {
     common.error.ErrorObject error = 2;
   }
 }
+
