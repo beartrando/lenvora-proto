@@ -8,45 +8,5 @@ import "common/ping.proto";
 import "battle.proto";
 
 service Engine {
-  rpc BattleChannel (stream BattleRequest) returns (stream BattleResponse);
 }
 
-message BattleRequest {
-  oneof input {
-    battle.BattleObject create = 1;
-    BattleStart         start = 2;
-    BattleMove          move = 3;
-    BattleLeave         leave = 4;
-    BattleDisconnect    disconnect = 5;
-    common.ping.Ping    ping = 6;
-  }
-}
-
-message BattleResponse {
-  oneof output {
-    battle.BattleObject      battle = 1;
-    common.empty.Empty       ping = 2;
-    common.error.ErrorObject error = 3;
-  }
-}
-
-message BattleMove {
-  string battle_id = 1;
-  string profile_id = 2;
-  int32  cell_idx = 3;
-}
-
-message BattleLeave {
-  string battle_id = 1;
-  string profile_id = 2;
-}
-
-message BattleDisconnect {
-  string battle_id = 1;
-  string profile_id = 2;
-}
-
-message BattleStart {
-  string battle_id = 1;
-  string profile_id = 2;
-}
