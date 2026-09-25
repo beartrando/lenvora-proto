@@ -1,0 +1,56 @@
+syntax = "proto3";
+
+package auth;
+
+import "google/protobuf/timestamp.proto";
+import "common/empty.proto";
+import "common/error.proto";
+import "common/response.proto";
+
+service Auth {
+  rpc Logout (common.empty.Empty) returns (common.response.SuccessResponse);
+  rpc RefreshTokens (RefreshTokensRequest) returns (SessionResponse);
+  rpc AnonymousSignIn (AnonymousSignInRequest) returns (SessionResponse);
+  rpc Get (UserIdRequest) returns (UserResponse);
+}
+
+message UserObject {
+  string                    id = 1;
+  string                    email = 2;
+  string                    google_id = 3;
+  google.protobuf.Timestamp last_login_at = 4;
+  google.protobuf.Timestamp last_active_at = 5;
+  google.protobuf.Timestamp created_at = 6;
+  google.protobuf.Timestamp updated_at = 7;
+}
+
+message UserIdRequest {
+  string user_id = 1;
+}
+
+message SessionObject {
+  string access_token = 1;
+  string refresh_token = 2;
+}
+
+message RefreshTokensRequest {
+  string token = 1;
+}
+
+message AnonymousSignInRequest {
+  string device_id = 1;
+}
+
+message SessionResponse {
+  oneof output {
+    SessionObject            session = 1;
+    common.error.ErrorObject error = 2;
+  }
+}
+
+message UserResponse {
+  oneof output {
+    UserObject               user = 1;
+    common.error.ErrorObject error = 2;
+  }
+}
