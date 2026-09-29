@@ -1,11 +1,11 @@
 syntax = "proto3";
 
-package engine;
+package gusteau;
 
 import "common/empty.proto";
 import "common/error.proto";
 import "common/ping.proto";
 
-service Engine {
+service Gusteau {
 }
 
