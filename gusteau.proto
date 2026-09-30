@@ -2,10 +2,137 @@ syntax = "proto3";
 
 package gusteau;
 
-import "common/empty.proto";
 import "common/error.proto";
-import "common/ping.proto";
 
 service Gusteau {
+  rpc CreateProduct(CreateProductRequest) returns (ProductResponse);
+  rpc GetProduct(GetProductRequest) returns (ProductResponse);
+
+  rpc GetNutritionCoefficient(GetNutritionCoefficientRequest) returns (NutritionCoefficientResponse);
+  rpc UpdateNutritionCoefficient(UpdateNutritionCoefficientRequest) returns (NutritionCoefficientResponse);
+
+  rpc CreateFoodLog(CreateFoodLogRequest) returns (FoodLogResponse);
+  rpc GetFoodLogs(GetFoodLogsRequest) returns (FoodLogsResponse);
 }
 
+message ProductObject {
+  string id = 1;
+  string profile_id = 2;
+  string name = 3;
+
+  double calories = 4;
+  double protein = 5;
+  double fat = 6;
+  double carbs = 7;
+
+  string created_at = 8;
+  string updated_at = 9;
+}
+
+message NutritionCoefficientObject {
+  string id = 1;
+  string profile_id = 2;
+
+  double protein = 3;
+  double fat = 4;
+  double carbs = 5;
+
+  string created_at = 6;
+  string updated_at = 7;
+}
+
+message FoodLogObject {
+  string id = 1;
+  string profile_id = 2;
+  string product_name = 3;
+
+  double weight = 4;
+  bool planned = 5;
+
+  double calories = 6;
+  double protein = 7;
+  double fat = 8;
+  double carbs = 9;
+
+  string date = 10;
+  string created_at = 11;
+  string updated_at = 12;
+}
+
+message CreateProductRequest {
+  string profile_id = 1;
+  string name = 2;
+
+  double calories = 3;
+  double protein = 4;
+  double fat = 5;
+  double carbs = 6;
+}
+
+message GetProductRequest {
+  string id = 1;
+}
+
+message ProductResponse {
+  oneof output {
+    ProductObject            product = 1;
+    common.error.ErrorObject error = 2;
+  }
+}
+
+message GetNutritionCoefficientRequest {
+  string profile_id = 1;
+}
+
+message UpdateNutritionCoefficientRequest {
+  string profile_id = 1;
+
+  double protein = 2;
+  double fat = 3;
+  double carbs = 4;
+}
+
+message NutritionCoefficientResponse {
+  oneof output {
+    NutritionCoefficientObject nutrition_coefficient = 1;
+    common.error.ErrorObject    error = 2;
+  }
+}
+
+message CreateFoodLogRequest {
+  string profile_id = 1;
+  string product_name = 2;
+
+  double weight = 3;
+  bool planned = 4;
+
+  double calories = 5;
+  double protein = 6;
+  double fat = 7;
+  double carbs = 8;
+
+  string date = 9;
+}
+
+message GetFoodLogsRequest {
+  string profile_id = 1;
+}
+
+message FoodLogResponse {
+  oneof output {
+    FoodLogObject            food_log = 1;
+    common.error.ErrorObject error = 2;
+  }
+}
+
+
+message FoodLogList {
+  repeated FoodLogObject food_log = 1;
+}
+
+message FoodLogsResponse {
+  oneof output {
+    FoodLogList              food_logs = 1;
+    common.error.ErrorObject error = 2;
+  }
+}
