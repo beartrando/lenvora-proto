@@ -15,6 +15,15 @@ service Gusteau {
   rpc GetFoodLogs(GetFoodLogsRequest) returns (FoodLogsResponse);
 }
 
+enum EventName {
+  UNKNOWN = 0;
+}
+
+message EventObject {
+  EventName name = 1;
+  string    profile_id = 2;
+}
+
 message ProductObject {
   string id = 1;
   string profile_id = 2;

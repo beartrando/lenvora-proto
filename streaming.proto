@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package streaming;
+
+import "common/empty.proto";
+import "common/error.proto";
+import "common/ping.proto";
+import "gusteau.proto";
+
+message EventRequest {
+  oneof input {
+    common.empty.Empty empty = 1;
+  }
+}
+
+message EventResponse {
+  oneof output {
+    gusteau.EventObject      event = 1;
+    common.empty.Empty       ping = 2;
+    common.error.ErrorObject error = 3;
+  }
+}
+
