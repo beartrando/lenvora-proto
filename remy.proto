@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package remy;
+
+import "common/error.proto";
+
+service Remy {
+  rpc Process(RemyRequest) returns (RemyResponse);
+}
+
+message RemyRequest {
+  string text = 1;
+}
+
+message RemyResponse {
+  oneof output {
+    string text = 1;
+    common.error.ErrorObject error = 2;
+  }
+
+}
