@@ -1,0 +1,60 @@
+syntax = "proto3";
+
+package speech_to_text;
+
+import "common/error.proto";
+
+// Bidi-поток распознавания голоса.
+//
+// Клиент (сервис streaming) первым сообщением передаёт auth (profile_id + JWT),
+// далее — аудио-чанки. Финальная транскрипция возвращается в ответном потоке.
+// Авторизация выполняется ровно один раз — при открытии потока.
+service SpeechToText {
+  rpc Transcribe(stream TranscribeRequest) returns (stream TranscribeResponse);
+}
+
+message TranscribeRequest {
+  oneof input {
+    Auth       auth  = 1;
+    AudioStart start = 2;
+    AudioChunk chunk = 3;
+    AudioStop  stop  = 4;
+  }
+}
+
+// Первое сообщение потока: проверка JWT (подпись + срок).
+// Принадлежность profile_id токену проверяется вызывающей стороной
+// (streaming авторизует профиль при открытии WS-сессии).
+message Auth {
+  string profile_id    = 1;
+  string access_token  = 2;
+}
+
+// Настройки аудио-сессии (второе сообщение потока, опционально).
+message AudioStart {
+  string mime_type     = 1; // напр. "audio/webm;codecs=opus"
+  string language_code = 2; // напр. "ru"; пусто — автоопределение
+}
+
+message AudioChunk {
+  bytes data = 1;
+}
+
+// Завершение аудио: сервис запускает финальную транскрипцию.
+message AudioStop {}
+
+message TranscribeResponse {
+  oneof output {
+    Transcription          transcription = 1;
+    common.error.ErrorObject error        = 2;
+  }
+}
+
+message Transcription {
+  string id           = 1;
+  string profile_id   = 2;
+  string text         = 3;
+  string language_code = 4;
+  float  confidence   = 5;
+  string created_at   = 6; // ISO-8601
+}
