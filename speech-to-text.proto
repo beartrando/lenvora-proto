@@ -3,6 +3,7 @@ syntax = "proto3";
 package speech_to_text;
 
 import "common/error.proto";
+import "google/protobuf/timestamp.proto";
 
 // Bidi-поток распознавания голоса.
 //
@@ -56,5 +57,5 @@ message Transcription {
   string text          = 3;
   string language_code = 4;
   float  confidence    = 5;
-  string created_at    = 6; // ISO-8601
+  google.protobuf.Timestamp created_at = 6;
 }
