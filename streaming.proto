@@ -6,18 +6,24 @@ import "common/empty.proto";
 import "common/error.proto";
 import "common/ping.proto";
 import "gusteau.proto";
+import "speech-to-text.proto";
 
 message EventRequest {
   oneof input {
-    common.empty.Empty empty = 1;
+    common.empty.Empty           empty       = 1;
+    speech_to_text.AudioStart    audio_start = 2;
+    speech_to_text.AudioChunk    audio_chunk = 3;
+    speech_to_text.AudioStop     audio_stop  = 4;
+    common.ping.Ping             ping        = 5;
   }
 }
 
 message EventResponse {
   oneof output {
-    gusteau.EventObject      event = 1;
-    common.empty.Empty       ping = 2;
-    common.error.ErrorObject error = 3;
+    gusteau.EventObject           event        = 1;
+    common.empty.Empty            ping         = 2;
+    common.error.ErrorObject      error        = 3;
+    speech_to_text.Transcription  transcription = 4;
   }
 }
 

@@ -1,0 +1,61 @@
+syntax = "proto3";
+
+package speech_to_text;
+
+import "common/error.proto";
+import "google/protobuf/timestamp.proto";
+
+// Bidi-поток распознавания голоса.
+//
+// Клиент (сервис streaming) первым сообщением передаёт audio_start
+// (profile_id + настройки аудио), далее — аудио-чанки. Финальная
+// транскрипция возвращается в ответном потоке.
+//
+// Авторизация в контракт не входит: авторизует вызывающая сторона —
+// streaming (при открытии WS-сессии) или orchestration.
+service SpeechToText {
+  rpc Transcribe(stream TranscribeRequest) returns (stream TranscribeResponse);
+}
+
+message TranscribeRequest {
+  oneof input {
+    AudioStart start = 1;
+    AudioChunk chunk = 2;
+    AudioStop  stop  = 3;
+  }
+}
+
+// Первое сообщение потока: профиль и настройки аудио-сессии.
+// profile_id обязателен; JWT не передаётся — принадлежность профиля
+// проверяет вызывающая сторона (streaming авторизует профиль
+// при открытии WS-сессии).
+message AudioStart {
+  string profile_id    = 1;
+  string mime_type     = 2; // напр. "audio/webm;codecs=opus"
+  string language_code = 3; // напр. "ru"; пусто — автоопределение
+}
+
+message AudioChunk {
+  bytes data = 1;
+}
+
+// Завершение аудио: сервис запускает финальную транскрипцию.
+message AudioStop {}
+
+// Ответ потока — всегда один из вариантов oneof: информационный объект
+// (транскрипция) либо ошибка. Ответов вне oneof контракт не предполагает.
+message TranscribeResponse {
+  oneof output {
+    Transcription          transcription = 1;
+    common.error.ErrorObject error        = 2;
+  }
+}
+
+message Transcription {
+  string id            = 1;
+  string profile_id    = 2;
+  string text          = 3;
+  string language_code = 4;
+  float  confidence    = 5;
+  google.protobuf.Timestamp created_at = 6;
+}
