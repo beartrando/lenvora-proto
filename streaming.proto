@@ -26,4 +26,3 @@ message EventResponse {
     speech_to_text.Transcription  transcription = 4;
   }
 }
-
